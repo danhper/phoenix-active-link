@@ -1,0 +1,4 @@
+%{"earmark": {:hex, :earmark, "0.2.1"},
+  "ex_doc": {:hex, :ex_doc, "0.11.4"},
+  "phoenix_html": {:hex, :phoenix_html, "2.5.1"},
+  "plug": {:hex, :plug, "1.1.3"}}
