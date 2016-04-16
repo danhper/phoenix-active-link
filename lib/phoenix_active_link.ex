@@ -2,6 +2,8 @@ defmodule PhoenixActiveLink do
   @moduledoc """
   PhoenixActiveLink provides helpers to add active links in views.
 
+  ## Configuration
+
   Default options can be customized in the configuration:
 
   ```elixir
@@ -12,6 +14,12 @@ defmodule PhoenixActiveLink do
     class_active: "enabled",
     class_inactive: "disabled"
   ```
+
+  ## Integrate in Phoenix
+
+  The simplest way to add the helpers to Phoenix is to `import PhoenixActiveLink`
+  either in your `web.ex` under views to have it available under every views,
+  or under for example `App.LayoutView` to have it available in your layout.
   """
 
   use Phoenix.HTML
