@@ -16,7 +16,15 @@ end
 
 ## Usage
 
-Here is a sample usage.
+First, add
+
+```
+import PhoenixActiveLink
+```
+
+to the `quote` of the `view` function in your `web.ex`.
+
+You can then use the functions as follow:
 
 ```erb
 <header>
@@ -26,6 +34,9 @@ Here is a sample usage.
   </ul>
 </header>
 ```
+
+If you prefer to write `PhoenixActiveLink.active_link` explicitly, you can skip
+the first step.
 
 ## Documentation
 
