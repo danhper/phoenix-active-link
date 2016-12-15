@@ -31,6 +31,9 @@ You can then use the functions as follow:
   <ul>
     <%= active_link(@conn, "Dashboard", to: "/", active: [{Dashboard, :index}], wrap_tag: :li) %>
     <%= active_link(@conn, "Users", to: "/users", wrap_tag: :li) %>
+    <%= active_link(@conn, to: "/users", wrap_tag: :li) do %>
+      <img src="foo.png">
+    <% end %>
   </ul>
 </header>
 ```
