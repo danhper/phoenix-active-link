@@ -49,6 +49,10 @@ defmodule PhoenixActiveLink do
     <%= active_link(@conn, "Link text", to: "/my/path", active: :exact) %>
     ```
   """
+  def active_link(conn, opts, do: contents) when is_list(opts) do
+    active_link(conn, contents, opts)
+  end
+
   def active_link(conn, text, opts) do
     opts = Keyword.merge(default_opts, opts)
     active? = active_path?(conn, opts)

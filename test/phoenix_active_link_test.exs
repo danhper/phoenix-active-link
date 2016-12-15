@@ -65,6 +65,19 @@ defmodule PhoenixActiveLinkTest do
     assert link == link("Link", to: "/foo", class: "disabled bar")
   end
 
+  test "active_link with a block" do
+    content = content_tag(:p, "Hello")
+    expected = link(to: "/foo", class: "") do
+      content
+    end
+
+    result = active_link(conn(path: "/"), to: "/foo") do
+       content
+    end
+
+    assert result == expected
+  end
+
   test "active_link with :wrap_tag" do
     expected = content_tag(:li, link("Link", to: "/foo", class: "active"), class: "active")
     assert active_link(conn(path: "/foo"), "Link", to: "/foo", wrap_tag: :li) == expected
