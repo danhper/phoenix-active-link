@@ -54,7 +54,7 @@ defmodule PhoenixActiveLink do
   end
 
   def active_link(conn, text, opts) do
-    opts = Keyword.merge(default_opts, opts)
+    opts = Keyword.merge(default_opts(), opts)
     active? = active_path?(conn, opts)
     extra_class = extra_class(active?, opts)
     opts = append_class(opts, extra_class)
