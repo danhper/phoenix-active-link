@@ -9,11 +9,11 @@ defmodule PhoenixActiveLink.Mixfile do
      name: "phoenix_active_link",
      source_url: "http://github.com/tuvistavie/phoenix-active-link",
      homepage_url: "http://github.com/tuvistavie/phoenix-active-link",
-     package: package,
+     package: package(),
      description: ~S(Phoenix view helper to manage "active" state of a link),
      elixir: "~> 1.1",
-     deps: deps,
-     docs: [source_ref: "#{@version}", extras: ["README.md"], main: "readme"]]
+     deps: deps(),
+     docs: [source_ref: @version, extras: ["README.md"], main: "readme"]]
   end
 
   defp package do
