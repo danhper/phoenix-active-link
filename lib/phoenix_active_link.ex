@@ -111,8 +111,8 @@ defmodule PhoenixActiveLink do
       :exclusive -> String.rstrip(conn.request_path, ?/) == String.rstrip(to, ?/)
       :exact     -> conn.request_path == to
       %Regex{} = regex -> Regex.match?(regex, conn.request_path)
-      controller_actions = active when is_list(controller_actions) ->
-        controller_actions_active?(conn, active)
+      controller_actions when is_list(controller_actions) ->
+        controller_actions_active?(conn, controller_actions)
       _ -> false
     end
   end
