@@ -18,7 +18,7 @@ end
 
 First, add
 
-```
+```elixir
 import PhoenixActiveLink
 ```
 
@@ -45,7 +45,9 @@ the first step.
 
 To specify the active and inactive tags for the wrap tag, use `class_active` and `class_inactive`. Example:
 
-    <%= active_link(@conn, "Home", to: "/", wrap_tag: :li, class_active: "active nav-item", class_inactive: "nav-item") %>
+```erb
+<%= active_link(@conn, "Home", to: "/", wrap_tag: :li, class_active: "active nav-item", class_inactive: "nav-item") %>
+```
     
 *Defaults can be set in the `config.ex` as noted in the [documentation](https://hexdocs.pm/phoenix_active_link/PhoenixActiveLink.html)*
 
