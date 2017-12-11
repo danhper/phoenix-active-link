@@ -41,6 +41,14 @@ You can then use the functions as follow:
 If you prefer to write `PhoenixActiveLink.active_link` explicitly, you can skip
 the first step.
 
+### Example of Active Tags
+
+To specify the active and inactive tags for the wrap tag, use `class_active` and `class_inactive`. Example:
+
+    <%= active_link(@conn, "Home", to: "/", wrap_tag: :li, class_active: "active nav-item", class_inactive: "nav-item") %>
+    
+*Defaults can be set in the `config.ex` as noted in the [documentation](https://hexdocs.pm/phoenix_active_link/PhoenixActiveLink.html)*
+
 ## Documentation
 
 For more information, take a look at the [documentation](https://hexdocs.pm/phoenix_active_link/PhoenixActiveLink.html)
