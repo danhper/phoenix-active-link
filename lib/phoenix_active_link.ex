@@ -108,7 +108,7 @@ defmodule PhoenixActiveLink do
       true       -> true
       false      -> false
       :inclusive -> starts_with_path?(conn.request_path, to)
-      :exclusive -> String.rstrip(conn.request_path, ?/) == String.rstrip(to, ?/)
+      :exclusive -> String.trim_trailing(conn.request_path, "/") == String.trim_trailing(to, "/")
       :exact     -> conn.request_path == to
       %Regex{} = regex -> Regex.match?(regex, conn.request_path)
       controller_actions when is_list(controller_actions) ->
@@ -120,7 +120,7 @@ defmodule PhoenixActiveLink do
   # NOTE: root path is an exception, otherwise it would be active all the time
   defp starts_with_path?(request_path, "/") when request_path != "/", do: false
   defp starts_with_path?(request_path, to) do
-    String.starts_with?(request_path, String.rstrip(to, ?/))
+    String.starts_with?(request_path, String.trim_trailing(to, "/"))
   end
 
   defp controller_actions_active?(conn, controller_actions) do
