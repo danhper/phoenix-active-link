@@ -1,7 +1,7 @@
 defmodule PhoenixActiveLink.Mixfile do
   use Mix.Project
 
-  @version "0.1.1"
+  @version "0.2.0"
 
   def project do
     [app: :phoenix_active_link,
@@ -11,7 +11,7 @@ defmodule PhoenixActiveLink.Mixfile do
      homepage_url: "http://github.com/tuvistavie/phoenix-active-link",
      package: package(),
      description: ~S(Phoenix view helper to manage "active" state of a link),
-     elixir: "~> 1.1",
+     elixir: "~> 1.3",
      deps: deps(),
      docs: [source_ref: @version, extras: ["README.md"], main: "readme"]]
   end
@@ -27,7 +27,7 @@ defmodule PhoenixActiveLink.Mixfile do
   defp deps do
     [{:phoenix_html, "~> 2.10"},
 
-     {:earmark, "~> 0.1", only: :docs},
-     {:ex_doc, "~> 0.11", only: :docs}]
+     {:earmark, "~> 1.2", only: :docs},
+     {:ex_doc, "~> 0.18", only: :docs}]
   end
 end
