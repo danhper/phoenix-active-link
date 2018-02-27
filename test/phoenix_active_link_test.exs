@@ -48,6 +48,16 @@ defmodule PhoenixActiveLinkTest do
     refute active_path?(conn(path: "/foo", query_string: "bar=baz%20foo"), to: "/foo?bar=baz foo", active: :exact_with_params)
   end
 
+  test "active_path? when :active is :inclusive_with_params" do
+    assert active_path?(conn(path: "/foo", query_string: "bar=2&baz=2"), to: "/foo", active: :inclusive_with_params)
+    assert active_path?(conn(path: "/foo", query_string: "bar=2&baz=2"), to: "/foo?baz=2", active: :inclusive_with_params)
+    assert active_path?(conn(path: "/foo", query_string: "bar%5Bx%5D=2&bar%5By%5D=2"), to: "/foo?bar[x]=2", active: :inclusive_with_params)
+    assert active_path?(conn(path: "/foo", query_string: "bar[x]=2&bar[y]=2"), to: "/foo?bar[x]=2", active: :inclusive_with_params)
+    refute active_path?(conn(path: "/foo", query_string: "bar=2&baz=2"), to: "/foo?baz=2&bax=6", active: :inclusive_with_params)
+    refute active_path?(conn(path: "/foo", query_string: "bar[x]=2&bar[y]=2"), to: "/foo?bar[x]=2&bar[z]=6", active: :inclusive_with_params)
+    refute active_path?(conn(path: "/foo", query_string: "bar=2&baz=2"), to: "/foobar?baz=2",active: :inclusive_with_params)
+  end
+
   test "active_path? when :active is a regex" do
     assert active_path?(conn(path: "/foo"), active: ~r(^/foo.*))
     refute active_path?(conn(path: "/bar/foo"), active: ~r(^/foo.*))
