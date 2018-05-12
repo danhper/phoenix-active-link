@@ -90,6 +90,8 @@ defmodule PhoenixActiveLink do
     * a `{controller, action}` list - A list of tuples with a controller module and an action symbol.
 
         Both can be the `:any` symbol to match any controller or action.
+    * `:exact_with_params`     - Will return `true` if the current path and the link path are exactly the same,
+       including trailing slashes and query string as is.
 
   ## Examples
 
@@ -110,6 +112,7 @@ defmodule PhoenixActiveLink do
       :inclusive -> starts_with_path?(conn.request_path, to)
       :exclusive -> String.trim_trailing(conn.request_path, "/") == String.trim_trailing(to, "/")
       :exact     -> conn.request_path == to
+      :exact_with_params -> request_path_with_params(conn) == to
       %Regex{} = regex -> Regex.match?(regex, conn.request_path)
       controller_actions when is_list(controller_actions) ->
         controller_actions_active?(conn, controller_actions)
@@ -127,6 +130,13 @@ defmodule PhoenixActiveLink do
     Enum.any? controller_actions, fn {controller, action} ->
       (controller == :any or controller == conn.private.phoenix_controller) and
         (action == :any or action == conn.private.phoenix_action)
+    end
+  end
+
+  defp request_path_with_params(conn) do
+    case conn.query_string do
+      "" -> conn.request_path
+      query_string -> conn.request_path <> "?" <> query_string
     end
   end
 
