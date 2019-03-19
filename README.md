@@ -10,7 +10,7 @@ Add `phoenix_active_link` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:phoenix_active_link, "~> 0.1.1"}]
+  [{:phoenix_active_link, "~> 0.2.1"}]
 end
 ```
 
