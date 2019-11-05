@@ -1,7 +1,7 @@
 defmodule PhoenixActiveLink.Mixfile do
   use Mix.Project
 
-  @version "0.2.1"
+  @version "0.3.0"
 
   def project do
     [app: :phoenix_active_link,
@@ -27,7 +27,7 @@ defmodule PhoenixActiveLink.Mixfile do
   defp deps do
     [{:phoenix_html, "~> 2.10"},
 
-     {:earmark, "~> 1.2", only: :docs},
-     {:ex_doc, "~> 0.18", only: :docs}]
+     {:earmark, "~> 1.2", only: :dev},
+     {:ex_doc, "~> 0.18", only: :dev}]
   end
 end
