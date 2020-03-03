@@ -103,8 +103,11 @@ defmodule PhoenixActiveLinkTest do
       link = active_link(conn(path: "/foo"), "Link", to: "/foo", wrap_tag: :li)
       assert link == content_tag(:li, link("Link", to: "/foo", class: "active"), class: "active")
 
-      link = active_link(conn(path: "/bar"), "Link", to: "/foo", wrap_tag: :li, wrap_tag_opts: [class: "foo"])
-      assert link == content_tag(:li, link("Link", to: "/foo", class: ""), class: "foo")
+      link = active_link(conn(path: "/bar"), "Link", to: "/foo", class: "nav-link", wrap_tag: :li, wrap_tag_opts: [class: "nav-item"])
+      assert link == content_tag(:li, link("Link", to: "/foo", class: "nav-link"), class: "nav-item")
+
+      link = active_link(conn(path: "/foo"), "Link", to: "/foo", class: "nav-link", wrap_tag: :li, wrap_tag_opts: [class: "nav-item"])
+      assert link == content_tag(:li, link("Link", to: "/foo", class: "active nav-link"), class: "active nav-item")
     end
   end
 

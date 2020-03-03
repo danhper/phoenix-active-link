@@ -36,18 +36,21 @@ defmodule PhoenixActiveLink do
   ## Options
 
     * `:active`         - See `active_path?/2` documentation for more information
-    * `:wrap_tag`       - Wraps the link in another tag which will also have the same active class.
-                          This options is useful for usage with `li` in bootstrap for example.
     * `:class_active`   - The class to add when the link is active. Defaults to `"active"`
-    * `:active_disable` - Uses a `span` element instead of an anchor when not active.
+    * `:active_disable` - The true, it uses a `span` element instead of an anchor when active.
+    * `:wrap_tag`       - Wraps the link in another tag which will also have the same active class.
+                          This option is useful for usage with `li` in bootstrap for example.
+    * `:wrap_tag_opts`  - Options to pass along with the `:wrap_tag`.
 
   ## Examples
 
-    ```elixir
-    <%= active_link(@conn, "Link text", to: "/my/path") %>
-    <%= active_link(@conn, "Link text", to: "/my/path", wrap_tag: :li) %>
-    <%= active_link(@conn, "Link text", to: "/my/path", active: :exact) %>
-    ```
+  ```elixir
+  active_link(@conn, "Link text", to: "/path")
+  active_link(@conn, "Link text", to: "/path", active: :exact)
+  active_link(@conn, "Link text", to: "/path", wrap_tag: :li)
+  active_link(@conn, "Link", to: "/path", class: "nav-link", wrap_tag: :li, wrap_tag_opts: [class: "nav-item"])
+  ```
+
   """
   def active_link(conn, opts, do: contents) when is_list(opts) do
     active_link(conn, contents, opts)
