@@ -83,13 +83,11 @@ defmodule PhoenixActiveLinkTest do
 
       link = active_link(conn(path: "/foo"), "Link", to: "/foo", class: "bar", class_active: "enabled")
       assert link == link("Link", to: "/foo", class: "enabled bar")
-
-      link = active_link(conn(path: "/bar"), "Link", to: "/foo", class: "bar", class_inactive: "disabled")
-      assert link == link("Link", to: "/foo", class: "disabled bar")
     end
 
     test "with a block" do
       content = content_tag(:p, "Hello")
+
       expected = link(to: "/foo", class: "") do
         content
       end
@@ -102,12 +100,11 @@ defmodule PhoenixActiveLinkTest do
     end
 
     test "with :wrap_tag" do
-      expected = content_tag(:li, link("Link", to: "/foo", class: "active"), class: "active")
-      assert active_link(conn(path: "/foo"), "Link", to: "/foo", wrap_tag: :li) == expected
+      link = active_link(conn(path: "/foo"), "Link", to: "/foo", wrap_tag: :li)
+      assert link == content_tag(:li, link("Link", to: "/foo", class: "active"), class: "active")
 
-      expected = content_tag(:li, link("Link", to: "/foo", class: "disabled"), class: "disabled foo")
-      link = active_link(conn(path: "/bar"), "Link", to: "/foo", class_inactive: "disabled", wrap_tag: :li, wrap_tag_opts: [class: "foo"])
-      assert link == expected
+      link = active_link(conn(path: "/bar"), "Link", to: "/foo", wrap_tag: :li, wrap_tag_opts: [class: "foo"])
+      assert link == content_tag(:li, link("Link", to: "/foo", class: ""), class: "foo")
     end
   end
 

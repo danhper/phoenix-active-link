@@ -11,8 +11,7 @@ defmodule PhoenixActiveLink do
 
   config :phoenix_active_link, :defaults,
     wrap_tag: :li,
-    class_active: "enabled",
-    class_inactive: "disabled"
+    class_active: "enabled"
   ```
 
   ## Integrate in Phoenix
@@ -26,7 +25,7 @@ defmodule PhoenixActiveLink do
   import Plug.Conn
   alias Plug.Conn.Query
 
-  @opts ~w(active wrap_tag class_active class_inactive active_disable wrap_tag_opts)a
+  @opts ~w(active wrap_tag class_active active_disable wrap_tag_opts)a
 
   @doc """
   `active_link/3` is a wrapper around `Phoenix.HTML.Link.link/2`.
@@ -38,9 +37,8 @@ defmodule PhoenixActiveLink do
 
     * `:active`         - See `active_path?/2` documentation for more information
     * `:wrap_tag`       - Wraps the link in another tag which will also have the same active class.
-        This options is useful for usage with `li` in bootstrap for example.
+                          This options is useful for usage with `li` in bootstrap for example.
     * `:class_active`   - The class to add when the link is active. Defaults to `"active"`
-    * `:class_inactive` - The class to add when the link is not active. Empty by default.
     * `:active_disable` - Uses a `span` element instead of an anchor when not active.
 
   ## Examples
@@ -61,6 +59,7 @@ defmodule PhoenixActiveLink do
     extra_class = extra_class(active?, opts)
     opts = append_class(opts, extra_class)
     link = make_link(active?, text, opts)
+
     cond do
       tag = opts[:wrap_tag] -> content_tag(tag, link, wrap_tag_opts(extra_class, opts))
       true                  -> link
@@ -173,7 +172,8 @@ defmodule PhoenixActiveLink do
   defp map_include?(in_map, %{} = map), do: Enum.all?(map, &map_include?(in_map, &1))
 
   defp wrap_tag_opts(extra_class, opts) do
-    Keyword.get(opts, :wrap_tag_opts, [])
+    opts
+    |> Keyword.get(:wrap_tag_opts, [])
     |> append_class(extra_class)
   end
 
@@ -185,13 +185,8 @@ defmodule PhoenixActiveLink do
     end
   end
 
-  defp extra_class(active?, opts) do
-    if active? do
-      opts[:class_active] || "active"
-    else
-      opts[:class_inactive] || ""
-    end
-  end
+  defp extra_class(true, opts), do: opts[:class_active] || "active"
+  defp extra_class(false, _), do: ""
 
   defp append_class(opts, class) do
     class =
@@ -201,6 +196,7 @@ defmodule PhoenixActiveLink do
       |> List.insert_at(0, class)
       |> Enum.reject(&(&1 == ""))
       |> Enum.join(" ")
+
     Keyword.put(opts, :class, class)
   end
 
