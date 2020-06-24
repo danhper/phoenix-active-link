@@ -88,7 +88,7 @@ defmodule PhoenixActiveLink do
     * a `%Regex{}` - Will return `true` if the current path matches the regex.
 
         Beware that `active?(conn, active: ~r/foo/)` will return `true` if the path is `"/bar/foo"`, so
-       you must use `active?(conn, active: ~r/^foo/)` if you want to match the begining of the path.
+       you must use `active?(conn, active: ~r/^foo/)` if you want to match the beginning of the path.
     * a `{controller, action}` list - A list of tuples with a controller module and an action symbol.
 
         Both can be the `:any` symbol to match any controller or action.

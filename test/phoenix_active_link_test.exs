@@ -43,7 +43,7 @@ defmodule PhoenixActiveLinkTest do
     refute active_path?(conn(path: "/foo"), to: "/foo/", active: :exact)
   end
 
-  test "active_path? when :acitve is :exact_with_params" do
+  test "active_path? when :active is :exact_with_params" do
     assert active_path?(conn(path: "/foo", query_string: "bar=1"), to: "/foo?bar=1", active: :exact_with_params)
     refute active_path?(conn(path: "/foo", query_string: "bar=1&baz=2"), to: "/foo?bar=1", active: :exact_with_params)
     assert active_path?(conn(path: "/foo", query_string: "bar[x]=1&bar[y]=1"), to: "/foo?bar[x]=1&bar[y]=1", active: :exact_with_params)
