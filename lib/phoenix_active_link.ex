@@ -92,6 +92,9 @@ defmodule PhoenixActiveLink do
     * a `{controller, action}` list - A list of tuples with a controller module and an action symbol.
 
         Both can be the `:any` symbol to match any controller or action.
+    * a `{live_view, action}` list - A list of tuples with a live view module and an action symbol.
+
+        Both can be the `:any` symbol to match any live view module or action.
     * `:exact_with_params`     - Will return `true` if the current path and the link path are exactly the same,
        including trailing slashes and query string as is.
 
@@ -107,6 +110,7 @@ defmodule PhoenixActiveLink do
   active_path?(conn, to: "/foo", active: :exclusive)
   active_path?(conn, to: "/foo", active: ~r(^/foo/[0-9]+))
   active_path?(conn, to: "/foo", active: [{MyController, :index}, {OtherController, :any}])
+  active_path?(conn, to: "/foo", active: [{MyLive, :index}, {OtherLive, :any}])
   active_path?(conn, to: "/foo?baz=2", active: :inclusive_with_params)
   ```
 
@@ -122,8 +126,8 @@ defmodule PhoenixActiveLink do
       :exact_with_params -> request_path_with_params(conn) == to
       :inclusive_with_params -> compare_path_and_params(conn, to)
       %Regex{} = regex -> Regex.match?(regex, conn.request_path)
-      controller_actions when is_list(controller_actions) ->
-        controller_actions_active?(conn, controller_actions)
+      module_actions when is_list(module_actions) ->
+        module_actions_active?(conn, module_actions)
       _ -> false
     end
   end
@@ -138,10 +142,17 @@ defmodule PhoenixActiveLink do
     String.starts_with?(request_path, String.trim_trailing(to_path, "/"))
   end
 
-  defp controller_actions_active?(conn, controller_actions) do
-    Enum.any? controller_actions, fn {controller, action} ->
-      (controller == :any or controller == conn.private.phoenix_controller) and
-        (action == :any or action == conn.private.phoenix_action)
+  defp module_actions_active?(conn, module_actions) do
+    {current_module, current_action} =
+      case conn.private do
+        %{phoenix_controller: module, phoenix_action: action} -> {module, action}
+        %{phoenix_live_view: {module, opts}} -> {module, Keyword.get(opts, :action)}
+        %{} -> {nil, nil}
+      end
+
+    Enum.any? module_actions, fn {module, action} ->
+      (module == :any or module == current_module) and
+        (action == :any or action == current_action)
     end
   end
 
