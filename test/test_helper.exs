@@ -9,7 +9,10 @@ defmodule TestHelpers do
   end
 
   defp make_private(opts) do
-    %{phoenix_controller: opts[:controller],
-      phoenix_action: opts[:action]}
+    cond do
+      opts[:controller] -> %{phoenix_controller: opts[:controller], phoenix_action: opts[:action]}
+      opts[:live_view] -> %{phoenix_live_view: {opts[:live_view], [action: opts[:action]]}}
+      true -> %{}
+    end
   end
 end

@@ -74,6 +74,14 @@ defmodule PhoenixActiveLinkTest do
     refute active_path?(conn, active: [{Bar, Foo}])
   end
 
+  test "active_path? when :active is a {live_view, action} list" do
+    conn = conn(live_view: Foo, action: Bar)
+    assert active_path?(conn, active: [{Foo, Bar}])
+    assert active_path?(conn, active: [{:any, Bar}])
+    assert active_path?(conn, active: [{Foo, :any}])
+    refute active_path?(conn, active: [{Bar, Foo}])
+  end
+  
   test "active_link without :wrap_tag" do
     assert active_link(conn(path: "/"), "Link", to: "/foo") == link("Link", to: "/foo", class: "")
     assert active_link(conn(path: "/foo"), "Link", to: "/foo") == link("Link", to: "/foo", class: "active")
