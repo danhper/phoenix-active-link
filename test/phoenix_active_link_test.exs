@@ -124,4 +124,8 @@ defmodule PhoenixActiveLinkTest do
   after
     Application.put_env(:phoenix_active_link, :defaults, [])
   end
+
+  test "active_link when :active is :inclusive_with_params for subpath" do
+    assert active_path?(conn(path: "/foo/bar", query_string: "foo=2"), to: "/foo?foo=2", active: :inclusive_with_params)
+  end
 end
