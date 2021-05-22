@@ -167,7 +167,7 @@ defmodule PhoenixActiveLink do
     %{query_params: request_params} = fetch_query_params(conn)
 
     with [path, query_params] <- String.split(to, "?"),
-         true <- conn.request_path == path do
+         true <- starts_with_path?(conn.request_path, path) do
       decoded_params =
         query_params
         |> Query.decode()
