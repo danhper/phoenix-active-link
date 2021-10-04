@@ -24,9 +24,10 @@ defmodule PhoenixActiveLink do
 
   use Phoenix.HTML
   import Plug.Conn
+  import Phoenix.LiveView.Helpers
   alias Plug.Conn.Query
 
-  @opts ~w(active wrap_tag class_active class_inactive active_disable wrap_tag_opts)a
+  @opts ~w(active wrap_tag class_active class_inactive active_disable wrap_tag_opts using)a
 
   @doc """
   `active_link/3` is a wrapper around `Phoenix.HTML.Link.link/2`.
@@ -42,6 +43,7 @@ defmodule PhoenixActiveLink do
     * `:class_active`   - The class to add when the link is active. Defaults to `"active"`
     * `:class_inactive` - The class to add when the link is not active. Empty by default.
     * `:active_disable` - Uses a `span` element instead of an anchor when not active.
+    * `:using`          - Define which function to use. Accepts `:link` (default), `:live_redirect` and `:live_patch`.
 
   ## Examples
 
@@ -49,6 +51,7 @@ defmodule PhoenixActiveLink do
     <%= active_link(@conn, "Link text", to: "/my/path") %>
     <%= active_link(@conn, "Link text", to: "/my/path", wrap_tag: :li) %>
     <%= active_link(@conn, "Link text", to: "/my/path", active: :exact) %>
+    <%= active_link(@conn, "Link text", to: "/my/live-view", using: :live_redirect) %>
     ```
   """
   def active_link(conn, opts, do: contents) when is_list(opts) do
@@ -61,9 +64,10 @@ defmodule PhoenixActiveLink do
     extra_class = extra_class(active?, opts)
     opts = append_class(opts, extra_class)
     link = make_link(active?, text, opts)
+
     cond do
       tag = opts[:wrap_tag] -> content_tag(tag, link, wrap_tag_opts(extra_class, opts))
-      true                  -> link
+      true -> link
     end
   end
 
@@ -117,23 +121,43 @@ defmodule PhoenixActiveLink do
   """
   def active_path?(conn, opts) do
     to = Keyword.get(opts, :to, "")
+
     case Keyword.get(opts, :active, :inclusive) do
-      true       -> true
-      false      -> false
-      :inclusive -> starts_with_path?(conn.request_path, to)
-      :exclusive -> String.trim_trailing(conn.request_path, "/") == String.trim_trailing(to, "/")
-      :exact     -> conn.request_path == to
-      :exact_with_params -> request_path_with_params(conn) == to
-      :inclusive_with_params -> compare_path_and_params(conn, to)
-      %Regex{} = regex -> Regex.match?(regex, conn.request_path)
+      true ->
+        true
+
+      false ->
+        false
+
+      :inclusive ->
+        starts_with_path?(conn.request_path, to)
+
+      :exclusive ->
+        String.trim_trailing(conn.request_path, "/") == String.trim_trailing(to, "/")
+
+      :exact ->
+        conn.request_path == to
+
+      :exact_with_params ->
+        request_path_with_params(conn) == to
+
+      :inclusive_with_params ->
+        compare_path_and_params(conn, to)
+
+      %Regex{} = regex ->
+        Regex.match?(regex, conn.request_path)
+
       module_actions when is_list(module_actions) ->
         module_actions_active?(conn, module_actions)
-      _ -> false
+
+      _ ->
+        false
     end
   end
 
   # NOTE: root path is an exception, otherwise it would be active all the time
   defp starts_with_path?(request_path, "/") when request_path != "/", do: false
+
   defp starts_with_path?(request_path, to) do
     # Parse both paths to strip any query parameters
     %{path: request_path} = URI.parse(request_path)
@@ -150,10 +174,10 @@ defmodule PhoenixActiveLink do
         %{} -> {nil, nil}
       end
 
-    Enum.any? module_actions, fn {module, action} ->
+    Enum.any?(module_actions, fn {module, action} ->
       (module == :any or module == current_module) and
         (action == :any or action == current_action)
-    end
+    end)
   end
 
   defp request_path_with_params(conn) do
@@ -192,7 +216,24 @@ defmodule PhoenixActiveLink do
     if active? and opts[:active_disable] do
       content_tag(:span, text, span_opts(opts))
     else
-      link(text, link_opts(opts))
+      link_fun = link_fun(opts)
+      link_fun.(text, link_opts(opts))
+    end
+  end
+
+  defp link_fun(opts) do
+    case Keyword.get(opts, :using, :link) do
+      :live_redirect ->
+        &live_redirect/2
+
+      :live_patch ->
+        &live_patch/2
+
+      :link ->
+        &link/2
+
+      value ->
+        raise "Value #{inspect(value)} is invalid, valids using are: :link, :live_redirect, :live_patch"
     end
   end
 
@@ -212,6 +253,7 @@ defmodule PhoenixActiveLink do
       |> List.insert_at(0, class)
       |> Enum.reject(&(&1 == ""))
       |> Enum.join(" ")
+
     Keyword.put(opts, :class, class)
   end
 
