@@ -42,6 +42,7 @@ defmodule PhoenixActiveLink do
     * `:class_active`   - The class to add when the link is active. Defaults to `"active"`
     * `:class_inactive` - The class to add when the link is not active. Empty by default.
     * `:active_disable` - Uses a `span` element instead of an anchor when not active.
+    * `:aria_current`   - The `aria-current` value to add when the link is active. Empty by default.
 
   ## Examples
 
@@ -60,6 +61,7 @@ defmodule PhoenixActiveLink do
     active? = active_path?(conn, opts)
     extra_class = extra_class(active?, opts)
     opts = append_class(opts, extra_class)
+    opts = aria_current(opts, active?)
     link = make_link(active?, text, opts)
     cond do
       tag = opts[:wrap_tag] -> content_tag(tag, link, wrap_tag_opts(extra_class, opts))
@@ -213,6 +215,14 @@ defmodule PhoenixActiveLink do
       |> Enum.reject(&(&1 == ""))
       |> Enum.join(" ")
     Keyword.put(opts, :class, class)
+  end
+
+  defp aria_current(opts, active?) do
+    if active? do
+      opts
+    else
+      Keyword.delete(opts, :aria_current)
+    end
   end
 
   defp link_opts(opts) do
