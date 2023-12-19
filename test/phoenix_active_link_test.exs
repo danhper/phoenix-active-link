@@ -81,7 +81,7 @@ defmodule PhoenixActiveLinkTest do
     assert active_path?(conn, active: [{Foo, :any}])
     refute active_path?(conn, active: [{Bar, Foo}])
   end
-  
+
   test "active_link without :wrap_tag" do
     assert active_link(conn(path: "/"), "Link", to: "/foo") == link("Link", to: "/foo", class: "")
     assert active_link(conn(path: "/foo"), "Link", to: "/foo") == link("Link", to: "/foo", class: "active")
@@ -112,6 +112,14 @@ defmodule PhoenixActiveLinkTest do
     expected = content_tag(:li, link("Link", to: "/foo", class: "disabled"), class: "disabled foo")
     link = active_link(conn(path: "/bar"), "Link", to: "/foo", class_inactive: "disabled", wrap_tag: :li, wrap_tag_opts: [class: "foo"])
     assert link == expected
+  end
+
+  test "active_link with :aria_current" do
+    expected = content_tag(:li, link("Link", to: "/foo", class: "active", aria_current: "page"), class: "active")
+    assert active_link(conn(path: "/foo"), "Link", to: "/foo", wrap_tag: :li, aria_current: "page") == expected
+
+    expected = content_tag(:li, link("Link", to: "/foo", class: ""), class: "")
+    assert active_link(conn(path: "/bar"), "Link", to: "/foo", wrap_tag: :li, aria_current: "page") == expected
   end
 
   test "customize defaults" do
