@@ -22,7 +22,7 @@ defmodule PhoenixActiveLink do
   or under for example `App.LayoutView` to have it available in your layout.
   """
 
-  use Phoenix.HTML
+  use PhoenixHTMLHelpers
   import Plug.Conn
   alias Plug.Conn.Query
 
