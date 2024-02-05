@@ -22,7 +22,7 @@ defmodule PhoenixActiveLink do
   or under for example `App.LayoutView` to have it available in your layout.
   """
 
-  use Phoenix.HTML
+  use PhoenixHTMLHelpers
   import Plug.Conn
   alias Plug.Conn.Query
 
@@ -63,9 +63,10 @@ defmodule PhoenixActiveLink do
     opts = append_class(opts, extra_class)
     opts = aria_current(opts, active?)
     link = make_link(active?, text, opts)
+
     cond do
       tag = opts[:wrap_tag] -> content_tag(tag, link, wrap_tag_opts(extra_class, opts))
-      true                  -> link
+      true -> link
     end
   end
 
@@ -119,23 +120,43 @@ defmodule PhoenixActiveLink do
   """
   def active_path?(conn, opts) do
     to = Keyword.get(opts, :to, "")
+
     case Keyword.get(opts, :active, :inclusive) do
-      true       -> true
-      false      -> false
-      :inclusive -> starts_with_path?(conn.request_path, to)
-      :exclusive -> String.trim_trailing(conn.request_path, "/") == String.trim_trailing(to, "/")
-      :exact     -> conn.request_path == to
-      :exact_with_params -> request_path_with_params(conn) == to
-      :inclusive_with_params -> compare_path_and_params(conn, to)
-      %Regex{} = regex -> Regex.match?(regex, conn.request_path)
+      true ->
+        true
+
+      false ->
+        false
+
+      :inclusive ->
+        starts_with_path?(conn.request_path, to)
+
+      :exclusive ->
+        String.trim_trailing(conn.request_path, "/") == String.trim_trailing(to, "/")
+
+      :exact ->
+        conn.request_path == to
+
+      :exact_with_params ->
+        request_path_with_params(conn) == to
+
+      :inclusive_with_params ->
+        compare_path_and_params(conn, to)
+
+      %Regex{} = regex ->
+        Regex.match?(regex, conn.request_path)
+
       module_actions when is_list(module_actions) ->
         module_actions_active?(conn, module_actions)
-      _ -> false
+
+      _ ->
+        false
     end
   end
 
   # NOTE: root path is an exception, otherwise it would be active all the time
   defp starts_with_path?(request_path, "/") when request_path != "/", do: false
+
   defp starts_with_path?(request_path, to) do
     # Parse both paths to strip any query parameters
     %{path: request_path} = URI.parse(request_path)
@@ -152,10 +173,10 @@ defmodule PhoenixActiveLink do
         %{} -> {nil, nil}
       end
 
-    Enum.any? module_actions, fn {module, action} ->
+    Enum.any?(module_actions, fn {module, action} ->
       (module == :any or module == current_module) and
         (action == :any or action == current_action)
-    end
+    end)
   end
 
   defp request_path_with_params(conn) do
@@ -214,6 +235,7 @@ defmodule PhoenixActiveLink do
       |> List.insert_at(0, class)
       |> Enum.reject(&(&1 == ""))
       |> Enum.join(" ")
+
     Keyword.put(opts, :class, class)
   end
 
